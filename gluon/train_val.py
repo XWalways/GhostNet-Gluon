@@ -10,7 +10,8 @@ from gluoncv.data import imagenet
 from gluoncv.model_zoo import get_model
 from gluoncv.utils import makedirs, LRSequential, LRScheduler
 from mxboard import SummaryWriter
-import dali
+#if you want to use dali
+#import dali
 import os
 
 from ghostnet import ghostnet
@@ -38,7 +39,7 @@ def parse_args():
                         help='use image record iter for data input. default is false.')
     parser.add_argument('--use-dali', action='store_true',
                         help='use nvidia-dali dataloader or not. default is false.')
-    parser.add_argument('--batch-size', type=int, default=64,
+    parser.add_argument('--batch-size', type=int, default=256,
                         help='training batch size per device (CPU/GPU).')
     parser.add_argument('--input-size', type=int, default=224,
                         help='size of the input image size. default is 224')
@@ -47,21 +48,21 @@ def parse_args():
     parser.add_argument('--random-seed', type=int, default=2)
 
     #------------------------------------------------training HPs---------------------------------------------------
-    parser.add_argument('--num-gpus', type=int, default=0,
+    parser.add_argument('--num-gpus', type=int, default=4,
                         help='number of gpus to use.')
-    parser.add_argument('-j', '--num-data-workers', dest='num_workers', default=4, type=int,
+    parser.add_argument('-j', '--num-data-workers', dest='num_workers', default=30, type=int,
                         help='number of preprocessing workers')
     parser.add_argument('--dtype', type=str, default='float32',
                         help='data type for training. default is float32')
-    parser.add_argument('--num-epochs', type=int, default=3,
+    parser.add_argument('--num-epochs', type=int, default=120,
                         help='number of training epochs.')
-    parser.add_argument('--lr', type=float, default=0.1,
-                        help='learning rate. default is 0.1.')
+    parser.add_argument('--lr', type=float, default=0.4,
+                        help='learning rate. default is 0.4.')
     parser.add_argument('--momentum', type=float, default=0.9,
                         help='momentum value for optimizer, default is 0.9.')
-    parser.add_argument('--wd', type=float, default=4e-5,
+    parser.add_argument('--wd', type=float, default=0.0001,
                         help='weight decay rate. default is 0.0001.')
-    parser.add_argument('--lr-mode', type=str, default='step',
+    parser.add_argument('--lr-mode', type=str, default='cosine',
                         help='learning rate scheduler mode. options are step, poly and cosine.')
     parser.add_argument('--lr-decay', type=float, default=0.1,
                         help='decay rate of learning rate. default is 0.1.')
