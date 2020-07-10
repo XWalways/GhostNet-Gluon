@@ -14,7 +14,8 @@ from mxboard import SummaryWriter
 #import dali
 import os
 
-from ghostnet import ghostnet
+#from ghostnet import ghostnet
+from GhostNet import ghostnet
 
 os.environ['MXNET_SAFE_ACCUMULATION'] = '1'
 #os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT'] = '0'
@@ -158,10 +159,11 @@ def main():
     optimizer_params = {'wd': opt.wd, 'momentum': opt.momentum, 'lr_scheduler': lr_scheduler}
     if opt.dtype != 'float32':
         optimizer_params['multi_precision'] = True
-    net = ghostnet(num_classes=classes, width=args.width, dropout=args.dropout)
+    #net = ghostnet(num_classes=classes, width=opt.width, dropout=opt.dropout)
+    net = ghostnet()    
 
     net.cast(opt.dtype)
-    net.hybridize()
+    #net.hybridize()
 
     if opt.resume_params is not '':
         net.load_parameters(opt.resume_params, ctx = context)
@@ -342,7 +344,7 @@ def main():
         acc_top5.reset()
         for i, batch in enumerate(val_data):
             data, label = batch_fn(batch, ctx)
-            outputs = [net(X.astype(opt.dtype, copy=False), cand.as_in_context(X.context), channel_mask.as_in_context(X.context)) for X in data]
+            outputs = [net(X.astype(opt.dtype, copy=False)) for X in data]
             acc_top1.update(label, outputs)
             acc_top5.update(label, outputs)
         _, top1 = acc_top1.get()
@@ -353,7 +355,7 @@ def main():
         if isinstance(ctx, mx.Context):
             ctx = [ctx]
         if opt.resume_params is '':
-            net._initialize(ctx=ctx, force_reinit=True)
+            net.initialize(mx.init.MSRAPrelu(), ctx=ctx, force_reinit=True)
         if opt.no_wd:
             for k, v in net.collect_params('.*beta|.*gamma|.*bias').items():
                 v.wd_mult = 0.0

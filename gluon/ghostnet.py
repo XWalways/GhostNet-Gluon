@@ -1,3 +1,4 @@
+#it's modified from official pytorch version
 import mxnet
 import mxnet as mx
 from mxnet import gluon

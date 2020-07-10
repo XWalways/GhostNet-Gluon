@@ -8,3 +8,7 @@ Reference:
 
 https://github.com/huawei-noah/ghostnet
 
+https://gluon-cv.mxnet.io/model_zoo/classification.html
+
+https://github.com/osmr/imgclsmob
+
